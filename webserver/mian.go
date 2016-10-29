@@ -1,8 +1,11 @@
 package main
 
 import (
+  "fmt"
   "net/http"
   "text/template"
+
+  "github.com/jteeuwen/go-pkg-optarg"
 )
 
 type Page struct {
@@ -24,6 +27,15 @@ func viewHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+  optarg.Add("p", "port", "Specify port number", "8080")
+  var portNum string = "8080"
+  for opt := range optarg.Parse() {
+    switch opt.ShortName {
+    case "p":
+      portNum = opt.String()
+    }
+  }
+
   http.HandleFunc("/", viewHandler) // hello
-  http.ListenAndServe(":8080", nil)
+  http.ListenAndServe(":"+portNum, nil)
 }
